@@ -1,13 +1,12 @@
 # Home Assistant Dashboard Generator
 
-This project is a local build pipeline that dynamically generates Home Assistant YAML dashboards. Instead of manually updating the dashboard every time a new smart device is added, this tool fetches the live state of your home via the Home Assistant API and compiles a modern "Sections" dashboard using Jinja2 templates.
+This project is a local build pipeline that dynamically generates Home Assistant YAML dashboards. Instead of manually updating the dashboard every time a new smart device is added, this tool fetches the live state of your home via the Home Assistant API and compiles a modern dashboard using Jinja2 templates.
 
 ## Features
 
 * **Automated Data Fetching:** Uses the Home Assistant Template API to automatically discover areas and the lights within them.
 * **Jinja2 Templating:** Uses `makejinja` to compile logic-heavy templates into clean, static YAML that Home Assistant loves.
 * **One-Command Deployment:** Uses `make deploy` to generate the dashboard and instantly push it to the Home Assistant server via `rsync`.
-* **Secure:** Keeps all sensitive URLs and access tokens locally in a `.env` file.
 
 ---
 
@@ -48,22 +47,22 @@ If you are running Home Assistant OS, you must install `rsync` on the server so 
 
 ## Local Installation & Setup
 
-1. Clone the repository and navigate into the folder:
+1. **Clone the repository and navigate into the folder:**
 
     ```Bash
     git clone <your-repo-url>
     cd ha_dashboards
     ```
 
-2. Run the setup command:
+2. **Run the setup command:**
 
-    This will automatically create an isolated Python virtual environment (`.venv`) and install all required dependencies.
+    This will automatically create an isolated Python virtual environment (`.venv`), install all required dependencies, and initialize the `commitlint` git hooks.
 
     ```Bash
     make setup
     ```
 
-3. Activate the virtual environment:
+3. **Activate the virtual environment:**
     
     You must run this command every time you open a new terminal session to work on this project.
 
@@ -71,20 +70,39 @@ If you are running Home Assistant OS, you must install `rsync` on the server so 
     source .venv/bin/activate
     ```
 
-4. Configure your environment variables:
+4. **Configure your environment variables:**
 
-    Create a file named `.env` in the root of the project. Do not commit this file to Git. Add your specific details:
+    Copy the `.env.example` file to create your local `.env` file. Do not commit your `.env` file to Git.
 
     ```Bash
-    # Home Assistant API Credentials
+    cp .env.example .env
+    ```
+
+    Then, open your new `.env` file and fill in your specific details:
+
+    ```Bash
+    # Fetch
     HA_URL=http://homeassistant.local:8123
     HA_TOKEN=your_long_lived_access_token_here
 
-    # SSH Deployment Details
+    # Deploy
     HA_SSH_USER=root
     HA_SSH_HOST=your_ha_ip_or_domain
-    HA_DASHBOARD_PATH=/config/configuration/dashboards/auto-dashboard
+    HA_DASHBOARD_PATH=/config/dashboards/auto-dashboard
     ```
+
+## Committing Code (Conventional Commits)
+
+This project strictly enforces [Conventional Commits](https://www.conventionalcommits.org/). When you make a commit, a background hook will verify your message format. If it does not match, the commit will be rejected.
+
+Your commit messages must be formatted like this: `<type>: <description>`
+
+**Examples:**
+
+- `feat: add living room fan to dashboard`
+- `fix: correct typo in the Makefile`
+- `docs: update readme with new installation steps`
+- `chore: update python dependencies`
 
 ## Managing Python Libraries
 
@@ -101,6 +119,10 @@ This will automatically overwrite `requirements.txt` with your exact, updated en
 ## Usage
 Ensure your virtual environment is active, then run any of the following `make` commands:
 
+### `make setup`
+
+The initial setup command. It creates a Python virtual environment in the project folder, installs all required dependencies from `requirements.txt`, and sets up git hooks for commit message linting.
+
 ### `make generate`
 
 The core command. It runs a two-step process:
@@ -112,6 +134,10 @@ The core command. It runs a two-step process:
 ### `make deploy`
 
 The deployment pipeline. It runs the `generate` process above, and then securely synchronizes the compiled YAML files directly to your Home Assistant server using `rsync`.
+
+### `make deploy-scp`
+
+The deployment pipeline. It runs the `generate` process above, and then securely synchronizes the compiled YAML files directly to your Home Assistant server using `scp`.
 
 ### `make clean`
 
@@ -125,18 +151,21 @@ Updates the `requirements.txt` file with any new Python libraries you have insta
 
 ```tree
 ha_dashboard_generator/
+|-- .venv/                   # Python virtual environment (ignored by Git)
+└── build/                   # ALL auto-generated files go here (Ignored by Git)
+    ├── data.yaml            # The intermediate fetched state
+    └── dashboards/          # The final YAML ready for Home Assistant
+├── queries/                 # Jinja scripts sent to Home Assistant's API
+├── scripts/                 # Any Python logic used to build the project
+├── templates/               # Your dashboard UI source code
+├── .commitlintrc.yaml       # Commit message rules
 ├── .env                     # Secrets
 ├── .env.example             # Example secrets file
 |-- .envrc                   # Automatically loads .venv when you `cd` into the folder (optional)
 ├── .gitignore               # Git ignore rules
+├── .pre-commit-config.yaml  # Git hook configuration
 ├── Makefile                 # Task runner commands
 ├── makejinja.toml           # Build tool configuration
 ├── README.md                # Project documentation
 ├── requirements.txt         # Python dependencies
-├── scripts/                 # Any Python logic used to build the project
-├── queries/                 # Jinja scripts sent to Home Assistant's API
-├── templates/               # Your dashboard UI source code
-└── build/                   # ALL auto-generated files go here (Ignored by Git)
-    ├── data.yaml            # The intermediate fetched state
-    └── dashboards/          # The final YAML ready for Home Assistant
 ```
