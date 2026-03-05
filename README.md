@@ -51,7 +51,7 @@ If you are running Home Assistant OS, you must install `rsync` on the server so 
 
     ```Bash
     git clone <your-repo-url>
-    cd ha_dashboards
+    cd ha_dashboard_generator
     ```
 
 2. **Run the setup command:**
@@ -149,12 +149,12 @@ Updates the `requirements.txt` file with any new Python libraries you have insta
 
 ## Project Structure
 
-```tree
+```bash
 ha_dashboard_generator/
 |-- .venv/                   # Python virtual environment (ignored by Git)
 └── build/                   # ALL auto-generated files go here (Ignored by Git)
-    ├── data.yaml            # The intermediate fetched state
-    └── dashboards/          # The final YAML ready for Home Assistant
+|   ├── data.yaml            # The intermediate fetched state
+|   └── dashboards/          # The final YAML ready for Home Assistant
 ├── queries/                 # Jinja scripts sent to Home Assistant's API
 ├── scripts/                 # Any Python logic used to build the project
 ├── templates/               # Your dashboard UI source code
