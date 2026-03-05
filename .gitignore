@@ -1,0 +1,20 @@
+# Secrets & Credentials
+.env
+
+# Python Virtual Environments
+.venv/
+venv/
+env/
+
+# Build Files
+build/
+
+# OS & Editor Files
+.vscode/
+
+# System Files
+.DS_Store
+
+# Python cache Files
+__pycache__/
+*.py[cod]

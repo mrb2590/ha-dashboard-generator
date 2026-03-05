@@ -1,0 +1,6 @@
+[makejinja]
+
+inputs = ["./templates"]
+output = "./build/dashboards"
+data = ["./build/data.yaml"]
+clean = true

@@ -1,0 +1,8 @@
+{% set output = namespace(areas={}) %}
+{% for area in areas() %}
+  {% set lights = area_entities(area) | select('match', '^light\\.') | list %}
+  {% if lights | length > 0 %}
+    {% set output.areas = dict(output.areas, **{area: {"name": area_name(area), "lights": lights}}) %}
+  {% endif %}
+{% endfor %}
+{{ output.areas | to_json }}

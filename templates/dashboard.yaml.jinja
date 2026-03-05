@@ -1,0 +1,16 @@
+title: Generated Home Dashboard
+views:
+  - title: Lights
+    type: sections
+    max_columns: 4
+    sections:
+{% for area_id, area_info in areas.items() %}
+      - title: "{{ area_info.name }}"
+        type: grid
+        cards:
+{% for light in area_info.lights %}
+          - type: tile
+            entity: {{ light }}
+            icon: mdi:lightbulb
+{% endfor %}
+{% endfor %}
