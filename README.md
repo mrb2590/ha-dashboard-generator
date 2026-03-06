@@ -171,17 +171,17 @@ Updates the `requirements.txt` file with any new Python libraries you have insta
 
 ```bash
 ha_dashboard_generator/
-|-- .venv/                        # Python virtual environment (ignored by Git)
-└── build/                        # ALL auto-generated files go here (Ignored by Git)
-|   ├── data.yaml                 # The intermediate fetched state
-|   └── dashboards/               # The final YAML ready for Home Assistant
+├── .venv/                        # Python virtual environment (ignored by Git)
+├── build/                        # ALL auto-generated files go here (Ignored by Git)
+│   ├── data.yaml                 # The intermediate fetched state
+│   └── dashboards/               # The final YAML ready for Home Assistant
 ├── queries/                      # Jinja scripts sent to Home Assistant's API
 ├── scripts/                      # Any Python logic used to build the project
 ├── templates/                    # Your dashboard UI source code
 ├── .commitlintrc.yaml            # Commit message rules
 ├── .env                          # Secrets
 ├── .env.example                  # Example secrets file
-|-- .envrc                        # Automatically loads .venv when you `cd` into the folder (optional)
+├── .envrc                        # Automatically loads .venv when you `cd` into the folder (optional)
 ├── .gitignore                    # Git ignore rules
 ├── .pre-commit-config.yaml       # Git hook configuration (commitlint, ruff, prettier)
 ├── .release-please-manifest.json # Release Please version manifest
