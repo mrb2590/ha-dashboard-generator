@@ -1,0 +1,13 @@
+[project]
+name = "ha-dashboard-generator"
+version = "1.0.0"
+description = "Home Assistant Dashboard Generator"
+
+# --- RUFF CONFIGURATION ---
+[tool.ruff]
+line-length = 88
+[tool.ruff.lint]
+# E: pycodestyle (formatting errors)
+# F: Pyflakes (syntax errors, undefined variables)
+# I: isort (automatically sort your imports alphabetically)
+select = ["E", "F", "I"]
