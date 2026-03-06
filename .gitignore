@@ -19,3 +19,6 @@ build/
 # Python cache Files
 __pycache__/
 *.py[cod]
+
+# Ruff cache
+.ruff_cache/

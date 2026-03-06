@@ -9,12 +9,14 @@ Provide concise, actionable guidance so an AI coding agent can be immediately pr
 
 ## Key files to inspect
 
-- `Makefile` — top-level tasks: `setup`, `generate`, `deploy`, `deploy-scp`, `freeze`, `clean`.
-- `scripts/fetch_ha_data.py` — requests the HA Template API and writes `build/data.yaml`.
+- `Makefile` — top-level tasks: `setup`, `generate`, `deploy`, `deploy-scp`, `freeze`, `clean`, `format`, `lint`.
+- `scripts/fetch_ha_data.py` — requests the HA Template API and writes `build/data.yaml`; uses `rich` for output and `python-dotenv` for env loading.
 - `queries/*.jinja` — Jinja templates sent to HA's `/api/template` endpoint; output is JSON used as input to `makejinja`.
 - `templates/dashboard.yaml.jinja` — dashboard template that iterates `areas.items()` and expects `build/data.yaml` to contain a top-level `areas` mapping.
 - `makejinja.toml` — build configuration for `makejinja` (check if present/adjusted for environment).
+- `pyproject.toml` — project metadata and `ruff` linter/formatter configuration.
 - `requirements.txt` / `.venv` — Python deps and virtualenv workflow.
+- `.pre-commit-config.yaml` — git hooks: commitlint (commit-msg), ruff (pre-commit), prettier for YAML/JSON/Markdown (pre-commit).
 - `.env.example` — lists required environment variables (HA_URL, HA_TOKEN, HA_SSH_USER, HA_SSH_HOST, HA_DASHBOARD_PATH).
 
 ## Developer workflows & reproduceable commands
@@ -23,11 +25,16 @@ Provide concise, actionable guidance so an AI coding agent can be immediately pr
 - Generate dashboards locally: `make generate` (runs `scripts/fetch_ha_data.py` then `makejinja`).
 - Deploy to HA server: `make deploy` (rsync) or `make deploy-scp` (scp).
 - Update Python deps: install packages into the active `.venv`, then run `make freeze` and commit updated `requirements.txt`.
+- Format and auto-fix Python code: `make format` (runs `ruff format` + `ruff check --fix`).
+- Lint Python code without modifying: `make lint` (runs `ruff check`).
 - Run fetch manually for debugging: `python3 scripts/fetch_ha_data.py` (ensure `.env` or env vars set).
 
 ## Project-specific conventions and gotchas
 
-- Commit messages are enforced via Conventional Commits. Use `<type>: <description>` (e.g., `feat: add living room fan`). The repo has a commit-msg hook installed by `make setup`.
+- Commit messages are enforced via Conventional Commits. Use `<type>: <description>` (e.g., `feat: add living room fan`). The repo has commit-msg AND pre-commit hooks installed by `make setup`.
+- Pre-commit hooks run `ruff` (lint/format) and `prettier` (YAML/JSON/Markdown) automatically on every commit — fix any failures before retrying.
+- All Python changes should pass `make lint`; run `make format` to auto-fix style issues.
+- Ruff rules are defined in `pyproject.toml` under `[tool.ruff.lint]` (E, F, I selected).
 - Do NOT commit `.env` — use `.env.example` as reference.
 - `queries/*.jinja` are NOT the final dashboards — they are rendered server-side by HA (via the Template API) and must produce JSON compatible with `templates/*.jinja`.
 - `scripts/fetch_ha_data.py` wraps the JSON returned by HA into `{"areas": ...}` — templates depend on that key.

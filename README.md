@@ -4,9 +4,9 @@ This project is a local build pipeline that dynamically generates Home Assistant
 
 ## Features
 
-* **Automated Data Fetching:** Uses the Home Assistant Template API to automatically discover areas and the lights within them.
-* **Jinja2 Templating:** Uses `makejinja` to compile logic-heavy templates into clean, static YAML that Home Assistant loves.
-* **One-Command Deployment:** Uses `make deploy` to generate the dashboard and instantly push it to the Home Assistant server via `rsync`.
+- **Automated Data Fetching:** Uses the Home Assistant Template API to automatically discover areas and the lights within them.
+- **Jinja2 Templating:** Uses `makejinja` to compile logic-heavy templates into clean, static YAML that Home Assistant loves.
+- **One-Command Deployment:** Uses `make deploy` to generate the dashboard and instantly push it to the Home Assistant server via `rsync`.
 
 ---
 
@@ -16,14 +16,14 @@ To run this deployment pipeline, you need specific configurations on both your l
 
 ### Local Machine (Your Mac/PC)
 
-* **Python 3.x:** To run the API fetching scripts and virtual environment.
-* **Make:** To run the `Makefile` commands (pre-installed on macOS/Linux).
-* **rsync:** To synchronize the generated files to the server (pre-installed on macOS/Linux).
+- **Python 3.x:** To run the API fetching scripts and virtual environment.
+- **Make:** To run the `Makefile` commands (pre-installed on macOS/Linux).
+- **rsync:** To synchronize the generated files to the server (pre-installed on macOS/Linux).
 
 ### Home Assistant Server
 
-* **Long-Lived Access Token:** Needed to securely query your devices. Generate one by going to your Home Assistant UI: *Profile (bottom left) -> Security -> Long-Lived Access Tokens*.
-* **Advanced SSH & Web Terminal Add-on:** The standard Home Assistant OS does not include `rsync` out of the box. You must use the community SSH add-on to accept the files.
+- **Long-Lived Access Token:** Needed to securely query your devices. Generate one by going to your Home Assistant UI: _Profile (bottom left) -> Security -> Long-Lived Access Tokens_.
+- **Advanced SSH & Web Terminal Add-on:** The standard Home Assistant OS does not include `rsync` out of the box. You must use the community SSH add-on to accept the files.
 
 ---
 
@@ -33,14 +33,14 @@ If you are running Home Assistant OS, you must install `rsync` on the server so 
 
 1. Enable **Advanced Mode** in your Home Assistant user profile.
 2. Go to **Settings -> Add-ons -> Add-on Store**.
-3. Install the **Advanced SSH & Web Terminal** add-on (from the Community Add-ons repository, *not* the official core "Terminal & SSH").
+3. Install the **Advanced SSH & Web Terminal** add-on (from the Community Add-ons repository, _not_ the official core "Terminal & SSH").
 4. Go to the add-on's **Configuration** tab.
 5. In the `packages` section, add `rsync` so it looks like this:
 
-    ```yaml
-    packages:
-        - rsync
-    ```
+   ```yaml
+   packages:
+     - rsync
+   ```
 
 6. Set up your SSH credentials (username/password or authorized keys) in the configuration.
 7. **Start/Restart** the add-on.
@@ -49,51 +49,62 @@ If you are running Home Assistant OS, you must install `rsync` on the server so 
 
 1. **Clone the repository and navigate into the folder:**
 
-    ```Bash
-    git clone <your-repo-url>
-    cd ha_dashboard_generator
-    ```
+   ```Bash
+   git clone <your-repo-url>
+   cd ha_dashboard_generator
+   ```
 
 2. **Run the setup command:**
 
-    This will automatically create an isolated Python virtual environment (`.venv`), install all required dependencies, and initialize the `commitlint` git hooks.
+   This will automatically create an isolated Python virtual environment (`.venv`), install all required dependencies, install `ruff`, and initialize git hooks for commit linting, code formatting, and style checking.
 
-    ```Bash
-    make setup
-    ```
+   ```Bash
+   make setup
+   ```
 
 3. **Activate the virtual environment:**
-    
-    You must run this command every time you open a new terminal session to work on this project.
 
-    ```Bash
-    source .venv/bin/activate
-    ```
+   You must run this command every time you open a new terminal session to work on this project.
+
+   ```Bash
+   source .venv/bin/activate
+   ```
 
 4. **Configure your environment variables:**
 
-    Copy the `.env.example` file to create your local `.env` file. Do not commit your `.env` file to Git.
+   Copy the `.env.example` file to create your local `.env` file. Do not commit your `.env` file to Git.
 
-    ```Bash
-    cp .env.example .env
-    ```
+   ```Bash
+   cp .env.example .env
+   ```
 
-    Then, open your new `.env` file and fill in your specific details:
+   Then, open your new `.env` file and fill in your specific details:
 
-    ```Bash
-    # Fetch
-    HA_URL=http://homeassistant.local:8123
-    HA_TOKEN=your_long_lived_access_token_here
+   ```Bash
+   # Fetch
+   HA_URL=http://homeassistant.local:8123
+   HA_TOKEN=your_long_lived_access_token_here
 
-    # Deploy
-    HA_SSH_USER=root
-    HA_SSH_HOST=your_ha_ip_or_domain
-    HA_DASHBOARD_PATH=/config/dashboards/auto-dashboard
-    ```
+   # Deploy
+   HA_SSH_USER=root
+   HA_SSH_HOST=your_ha_ip_or_domain
+   HA_DASHBOARD_PATH=/config/dashboards/auto-dashboard
+   ```
+
+## Code Quality
+
+This project uses [`ruff`](https://docs.astral.sh/ruff/) for linting and formatting Python code. Configuration lives in `pyproject.toml`.
+
+- **Format & auto-fix:** `make format` (runs `ruff format` and `ruff check --fix`)
+- **Lint only:** `make lint` (runs `ruff check` without modifying files)
+
+Ruff is also enforced automatically as a pre-commit hook — code that fails linting will be blocked before the commit is recorded.
+
+Prettier is run as a pre-commit hook for YAML, JSON, and Markdown files.
 
 ## Committing Code (Conventional Commits)
 
-This project strictly enforces [Conventional Commits](https://www.conventionalcommits.org/). When you make a commit, a background hook will verify your message format. If it does not match, the commit will be rejected.
+This project strictly enforces [Conventional Commits](https://www.conventionalcommits.org/). When you make a commit, background hooks will verify your message format and run the linter. If either check fails, the commit will be rejected.
 
 Your commit messages must be formatted like this: `<type>: <description>`
 
@@ -106,7 +117,7 @@ Your commit messages must be formatted like this: `<type>: <description>`
 
 ## Managing Python Libraries
 
-If you decide to expand your Python scripts and need to install new libraries (e.g., `pip install beautifulsoup4`), you must update the     `requirements.txt` file. If you don't, the pipeline will break for anyone else cloning the repository (or for you on a new machine).
+If you decide to expand your Python scripts and need to install new libraries (e.g., `pip install beautifulsoup4`), you must update the `requirements.txt` file. If you don't, the pipeline will break for anyone else cloning the repository (or for you on a new machine).
 
 To safely lock in your new dependencies, just run:
 
@@ -117,6 +128,7 @@ make freeze
 This will automatically overwrite `requirements.txt` with your exact, updated environment. **Always commit the updated `requirements.txt` to version control.**
 
 ## Usage
+
 Ensure your virtual environment is active, then run any of the following `make` commands:
 
 ### `make setup`
@@ -139,6 +151,14 @@ The deployment pipeline. It runs the `generate` process above, and then securely
 
 The deployment pipeline. It runs the `generate` process above, and then securely synchronizes the compiled YAML files directly to your Home Assistant server using `scp`.
 
+### `make format`
+
+Formats and auto-fixes all Python source files using `ruff`. Runs both `ruff format` (style formatting) and `ruff check --fix` (lint auto-fix).
+
+### `make lint`
+
+Runs the `ruff` linter across all Python source files without modifying them. Use this to check for issues before committing.
+
 ### `make clean`
 
 A utility command that deletes the `build/` directory so you can start from a totally clean slate.
@@ -151,21 +171,24 @@ Updates the `requirements.txt` file with any new Python libraries you have insta
 
 ```bash
 ha_dashboard_generator/
-|-- .venv/                   # Python virtual environment (ignored by Git)
-└── build/                   # ALL auto-generated files go here (Ignored by Git)
-|   ├── data.yaml            # The intermediate fetched state
-|   └── dashboards/          # The final YAML ready for Home Assistant
-├── queries/                 # Jinja scripts sent to Home Assistant's API
-├── scripts/                 # Any Python logic used to build the project
-├── templates/               # Your dashboard UI source code
-├── .commitlintrc.yaml       # Commit message rules
-├── .env                     # Secrets
-├── .env.example             # Example secrets file
-|-- .envrc                   # Automatically loads .venv when you `cd` into the folder (optional)
-├── .gitignore               # Git ignore rules
-├── .pre-commit-config.yaml  # Git hook configuration
-├── Makefile                 # Task runner commands
-├── makejinja.toml           # Build tool configuration
-├── README.md                # Project documentation
-├── requirements.txt         # Python dependencies
+|-- .venv/                        # Python virtual environment (ignored by Git)
+└── build/                        # ALL auto-generated files go here (Ignored by Git)
+|   ├── data.yaml                 # The intermediate fetched state
+|   └── dashboards/               # The final YAML ready for Home Assistant
+├── queries/                      # Jinja scripts sent to Home Assistant's API
+├── scripts/                      # Any Python logic used to build the project
+├── templates/                    # Your dashboard UI source code
+├── .commitlintrc.yaml            # Commit message rules
+├── .env                          # Secrets
+├── .env.example                  # Example secrets file
+|-- .envrc                        # Automatically loads .venv when you `cd` into the folder (optional)
+├── .gitignore                    # Git ignore rules
+├── .pre-commit-config.yaml       # Git hook configuration (commitlint, ruff, prettier)
+├── .release-please-manifest.json # Release Please version manifest
+├── Makefile                      # Task runner commands
+├── makejinja.toml                # Build tool configuration
+├── pyproject.toml                # Project metadata and ruff configuration
+├── README.md                     # Project documentation
+├── release-please-config.json    # Release Please configuration
+├── requirements.txt              # Python dependencies
 ```
