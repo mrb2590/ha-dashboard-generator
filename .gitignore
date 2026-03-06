@@ -10,7 +10,8 @@ env/
 build/
 
 # OS & Editor Files
-.vscode/
+*.code-workspace
+.idea/
 
 # System Files
 .DS_Store
